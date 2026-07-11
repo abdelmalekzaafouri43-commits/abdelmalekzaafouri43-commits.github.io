@@ -29,3 +29,7 @@
 - [ ] Finishing **Unit I: Entertaining Myself** for our 15-page pupil resource booklet.
 - [ ] Linking live Google Docs learning streams directly onto the official homepage.
 
+---
+
+## 📬 Contact Me
+* If you are a parent, pupil, or fellow educator, feel free to reach out via email!
