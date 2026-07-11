@@ -1,5 +1,6 @@
 # Hi there, I'm Mr. Zaafouri Abdelmalek! 👋
 ### 🇹🇳 English Teacher & Creative Content Creator from Tunisia
+![Views](https://komarev.com/ghvc/?username=abdelmalekzaafouri43-commits&color=blue&style=flat-square)
 
 <br />
 
