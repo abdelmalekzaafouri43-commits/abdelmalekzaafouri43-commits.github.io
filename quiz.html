@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English on the go - By Mr. Zaafouri Abdelmalek</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            --primary: #2b5c8f;
+            --primary-light: #edf4fa;
+            --primary-border: #d0e1fd;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --success-border: #a7f3d0;
+            --error: #ef4444;
+            --error-bg: #fef2f2;
+            --error-border: #fca5a5;
+        }
+
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: var(--bg-gradient); 
+            margin: 0; 
+            padding: 16px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+            color: var(--text-dark); 
+        }
+        
+        .quiz-container { 
+            background-color: white; 
+            padding: 32px 24px; 
+            border-radius: 24px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            text-align: center; 
+            max-width: 520px; 
+            width: 100%; 
+            position: relative; 
+            box-sizing: border-box;
+        }
+        
+        .progress-container { 
+            width: 100%; 
+            height: 12px; 
+            background-color: #e2e8f0; 
+            border-radius: 6px; 
+            margin-bottom: 24px; 
+            overflow: hidden; 
+        }
+        
+        .progress-bar { 
+            height: 100%; 
+            width: 0%; 
+            background: linear-gradient(90deg, #3b82f6, #2563eb); 
+            transition: width 0.4s ease; 
+        }
+        
+        .audio-control { 
+            position: absolute; 
+            top: 24px; 
+            right: 24px; 
+            background-color: var(--primary-light); 
+            border: 2px solid var(--primary-border); 
+            border-radius: 50%; 
+            width: 44px; 
+            height: 44px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 1.2rem; 
+            z-index: 10;
+        }
+        
+        h1 { color: var(--primary); margin: 0 0 4px 0; font-size: 1.5rem; text-align: left; }
+        .logo-text { text-transform: uppercase; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 24px; text-align: left; font-weight: 700; }
+        
+        .display-box { 
+            background-color: var(--primary-light); 
+            padding: 24px; 
+            border-radius: 16px; 
+            font-size: 1.25rem; 
+            margin-bottom: 24px; 
+            color: var(--primary); 
+            font-weight: 700; 
+            border: 2px solid var(--primary-border); 
+            min-height: 80px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        
+        .correct-feedback { background-color: var(--success-bg) !important; color: var(--success) !important; border-color: var(--success-border) !important; }
+        .wrong-feedback { background-color: var(--error-bg) !important; color: var(--error) !important; border-color: var(--error-border) !important; }
+
+        .interactive-area { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+        
+        .reorder-zone {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            min-height: 50px;
+            padding: 10px;
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .reorder-pool {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .btn { 
+            background: white; 
+            color: var(--primary); 
+            border: 2px solid #cbd5e1; 
+            border-bottom: 5px solid #94a3b8; 
+            padding: 14px; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: transform 0.1s, border-bottom-width 0.1s, background-color 0.2s; 
+        }
+        
+        .btn:active:not(:disabled) { 
+            transform: translateY(3px); 
+            border-bottom-width: 2px; 
+        }
+
+        .tile {
+            background: #ffffff;
+            color: var(--primary);
+            border: 2px solid #3b82f6;
+            border-bottom: 5px solid #1d4ed8;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+        .tile:active {
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+        
+        .btn.clicked-correct {
+            background-color: var(--success) !important;
+            color: white !important;
+            border-color: #059669 !important;
+            border-bottom-color: #047857 !important;
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+
+        .btn.clicked-wrong {
+            background-color: var(--error) !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+            border-bottom-color: #b91c1c !important;
+            transform: translateY(3px);
+            border-bottom-width: 2px;
+        }
+
+        .btn:disabled:not(.clicked-correct):not(.clicked-wrong) { 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+            color: #94a3b8;
+        }
+        
+        .action-btn { 
+            background-color: var(--success); 
+            color: white; 
+            border: 2px solid #059669;
+            border-bottom: 6px solid #047857;
+            padding: 16px; 
+            border-radius: 12px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: none; 
+            width: 100%; 
+            font-size: 1.1rem;
+            transition: all 0.1s;
+        }
+        .action-btn:active {
+            transform: translateY(4px);
+            border-bottom-width: 2px;
+        }
+
+        .score-box { 
+            margin-top: 24px; 
+            font-size: 0.95rem; 
+            color: var(--text-muted); 
+            border-top: 1px dashed #e2e8f0; 
+            padding-top: 16px; 
+            font-weight: 600;
+        }
+        
+        .footer-copyright {
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        
+        .visual-display {
+            font-size: 3.5rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div class="progress-container"><div class="progress-bar" id="level-progress"></div></div>
+    <button class="audio-control" id="audio-toggle" onclick="toggleMute()">🔊</button>
+    <h1 id="level-title">Level 1: Past Simple</h1>
+    <div class="logo-text">English on the go — By Mr. Zaafouri Abdelmalek</div>
+    
+    <div class="display-box" id="display-area"><div id="question-text">Loading...</div></div>
+    <div id="reorder-container" style="display:none;">
+        <div class="reorder-zone" id="build-zone"></div>
+        <div class="reorder-pool" id="pool-zone"></div>
+    </div>
+    <div class="interactive-area" id="interaction-block"></div>
+
+    <button class="action-btn" id="next-level-btn" onclick="goToNextLevel()">Next Level ➔</button>
+    <div class="score-box" id="score-val">Score: 0 / 0</div>
+    <div class="footer-copyright">© 2026 English on the go. Created by Mr. Zaafouri Abdelmalek.</div>
+</div>
+
+<script>
+    const levelsData = {
+        1: { 
+            title: "Level 1: Past Simple", 
+            type: "grammar",
+            questions: [
+                { s: "Yesterday, I ________ a delicious pizza for lunch.", opt: ["eat", "ate", "eating", "eats"], ans: "ate" },
+                { s: "She ________ her keys in the car this morning.", opt: ["forget", "forgot", "forgetting", "forgets"], ans: "forgot" },
+                { s: "They ________ to the park last Sunday.", opt: ["go", "went", "going", "goes"], ans: "went" },
+                { s: "We ________ a great movie last night.", opt: ["watch", "watched", "watching", "watches"], ans: "watched" },
+                { s: "He ________ his homework before going to bed.", opt: ["do", "did", "doing", "does"], ans: "did" }
+            ]
+        },
+        2: { 
+            title: "Level 2: Present Progressive", 
+            type: "grammar",
+            questions: [
+                { s: "Look! The children ________ in the garden.", opt: ["play", "played", "are playing", "plays"], ans: "are playing" },
+                { s: "She ________ a book at the moment.", opt: ["read", "is reading", "reads", "reading"], ans: "is reading" },
+                { s: "Listen! The birds ________ beautifully.", opt: ["sing", "are singing", "sang", "sings"], ans: "are singing" },
+                { s: "I ________ my English lessons right now.", opt: ["study", "am studying", "studied", "studies"], ans: "am studying" },
+                { s: "They ________ to music now.", opt: ["listen", "listened", "are listening", "listens"], ans: "are listening" }
+            ]
+        },
+        3: { 
+            title: "Level 3: Future Simple (Will)", 
+            type: "grammar",
+            questions: [
+                { s: "I ________ travel to London next summer.", opt: ["will", "would", "shall", "going to"], ans: "will" },
+                { s: "They ________ buy a new house next year.", opt: ["will", "are", "have", "did"], ans: "will" },
+                { s: "She ________ help you with your homework tomorrow.", opt: ["will", "is", "does", "did"], ans: "will" },
+                { s: "We ________ go to the beach next weekend.", opt: ["will", "are going to", "went", "goes"], ans: "will" },
+                { s: "He ________ call you tonight.", opt: ["will", "is", "called", "calls"], ans: "will" }
+            ]
+        },
+        4: { 
+            title: "Level 4: Present Simple", 
+            type: "grammar",
+            questions: [
+                { s: "She ________ to school every day.", opt: ["go", "goes", "going", "went"], ans: "goes" },
+                { s: "They ________ in a big house.", opt: ["live", "lives", "living", "lived"], ans: "live" },
+                { s: "He ________ his teeth every morning.", opt: ["brush", "brushes", "brushing", "brushed"], ans: "brushes" },
+                { s: "We ________ English on Mondays.", opt: ["study", "studies", "studying", "studied"], ans: "study" },
+                { s: "The sun ________ in the east.", opt: ["rise", "rises", "rising", "rose"], ans: "rises" }
+            ]
+        },
+        5: {
+            title: "Level 5: Past Progressive",
+            type: "grammar",
+            questions: [
+                { s: "I ________ my homework when you called.", opt: ["was doing", "did", "were doing", "am doing"], ans: "was doing" },
+                { s: "They ________ TV when the power went out.", opt: ["watched", "was watching", "were watching", "are watching"], ans: "were watching" },
+                { s: "While she ________, she fell asleep.", opt: ["read", "was reading", "were reading", "reads"], ans: "was reading" },
+                { s: "We ________ in the garden when it started to rain.", opt: ["played", "was playing", "were playing", "are playing"], ans: "were playing" },
+                { s: "He ________ when the phone rang.", opt: ["slept", "was sleeping", "were sleeping", "is sleeping"], ans: "was sleeping" }
+            ]
+        },
+        6: { 
+            title: "Level 6: Reorder Letters", 
+            type: "reorder_letters",
+            questions: [
+                { s: "Unscramble to find where we learn:", word: "SCHOOL", pool: ["O", "S", "H", "C", "L", "O"] },
+                { s: "Unscramble this helpful class object:", word: "PENCIL", pool: ["N", "E", "I", "P", "L", "C"] },
+                { s: "Unscramble this favorite reading item:", word: "BOOK", pool: ["K", "O", "B", "O"] },
+                { s: "Unscramble your English class leader:", word: "TEACHER", pool: ["E", "T", "A", "H", "C", "R", "E"] }
+            ]
+        },
+        7: { 
+            title: "Level 7: Reorder Sentences", 
+            type: "reorder_sentence",
+            questions: [
+                { s: "Arrange to form a regular routine:", sentence: "She plays tennis everyday.", pool: ["tennis", "plays", "She", "everyday."] },
+                { s: "Arrange to form a past action:", sentence: "We watched a movie yesterday.", pool: ["watched", "yesterday.", "We", "a", "movie"] },
+                { s: "Arrange to form a simple rule:", sentence: "He likes learning English.", pool: ["likes", "English.", "He", "learning"] }
+            ]
+        },
+        8: { 
+            title: "Level 8: Click the Odd One Out", 
+            type: "odd_one_out",
+            questions: [
+                { s: "Which one does NOT belong with transport?", opt: ["Car 🚗", "Train 🚆", "Apple 🍎", "Plane ✈️"], ans: "Apple 🍎" },
+                { s: "Which one is NOT a color?", opt: ["Red 🔴", "Happy 😊", "Blue 🔵", "Green 🟢"], ans: "Happy 😊" },
+                { s: "Which one is NOT a day of the week?", opt: ["Monday", "Friday", "June", "Sunday"], ans: "June" }
+            ]
+        },
+        9: { 
+            title: "Level 9: Flags & Countries", 
+            type: "flag_match",
+            questions: [
+                { visual: "🇬🇧", s: "Which country's flag is this?", opt: ["United Kingdom", "Tunisia", "France", "Canada"], ans: "United Kingdom" },
+                { visual: "🇹🇳", s: "Which country's flag is this?", opt: ["Tunisia", "Algeria", "Morocco", "Egypt"], ans: "Tunisia" },
+                { visual: "🇺🇸", s: "Which country's flag is this?", opt: ["United States", "Australia", "United Kingdom", "Canada"], ans: "United States" },
+                { visual: "🇫🇷", s: "Which country's flag is this?", opt: ["Italy", "Spain", "France", "Germany"], ans: "France" }
+            ]
+        },
+        10: { 
+            title: "Level 10: Animals & Names", 
+            type: "animal_match",
+            questions: [
+                { visual: "🦁", s: "What animal is this?", opt: ["Lion", "Tiger", "Cat", "Dog"], ans: "Lion" },
+                { visual: "🐘", s: "What animal is this?", opt: ["Elephant", "Giraffe", "Monkey", "Mouse"], ans: "Elephant" },
+                { visual: "🐒", s: "What animal is this?", opt: ["Monkey", "Rabbit", "Koala", "Lion"], ans: "Monkey" },
+                { visual: "🦊", s: "What animal is this?", opt: ["Fox", "Wolf", "Dog", "Cat"], ans: "Fox" }
+            ]
+        }
+    };
+
+    let currentLevel = 1, currentIndex = 0, score = 0, isMuted = false, audioCtx = null, bgInterval = null;
+    let builtAnswer = [];
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            bgInterval = setInterval(() => { 
+                if (!isMuted && audioCtx) playAudio(196, 'sine', 0.6, 0.01); 
+            }, 2500);
+        }
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function toggleMute() {
+        isMuted = !isMuted;
+        document.getElementById("audio-toggle").textContent = isMuted ? "✖🔇" : "🔊";
+        if (!isMuted) initAudio();
+    }
+
+    function playAudio(freq, type, dur, volume = 0.08) {
+        if (isMuted) return;
+        if (!audioCtx) initAudio();
+        
+        try {
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            
+            let osc = audioCtx.createOscillator();
+            let g = audioCtx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            g.gain.setValueAtTime(volume, audioCtx.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+            osc.connect(g);
+            g.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + dur);
+        } catch(e) {
+            console.log("Audio play blocked");
+        }
+    }
+
+    function playCorrectSound() {
+        playAudio(523.25, 'triangle', 0.15, 0.1);
+        setTimeout(() => playAudio(659.25, 'triangle', 0.25, 0.1), 100);
+    }
+
+    function playWrongSound() {
+        playAudio(220.00, 'sawtooth', 0.25, 0.08);
+        setTimeout(() => playAudio(196.00, 'sawtooth', 0.35, 0.08), 120);
+    }
+
+    function updateProgressBar() {
+        const total = levelsData[currentLevel].questions.length;
+        const p = (currentIndex / total) * 100;
+        document.getElementById("level-progress").style.width = `${p}%`;
+    }
+
+    function loadQuestion() {
+        const level = levelsData[currentLevel];
+        const q = level.questions[currentIndex];
+        
+        document.getElementById("level-title").textContent = level.title;
+        document.getElementById("display-area").className = "display-box";
+        document.getElementById("score-val").textContent = `Score: ${score} / ${currentIndex}`;
+        
+        const block = document.getElementById("interaction-block");
+        const reorderContainer = document.getElementById("reorder-container");
+        
+        block.innerHTML = "";
+        reorderContainer.style.display = "none";
+        builtAnswer = [];
+
+        if (level.type === "reorder_letters" || level.type === "reorder_sentence") {
+            reorderContainer.style.display = "block";
+            document.getElementById("display-area").innerHTML = `<div id="question-text">${q.s}</div>`;
+            
+            const buildZone = document.getElementById("build-zone");
+            const poolZone = document.getElementById("pool-zone");
+            buildZone.innerHTML = "";
+            poolZone.innerHTML = "";
+
+            q.pool.forEach((item, index) => {
+                const t = document.createElement("button");
+                t.className = "tile";
+                t.textContent = item;
+                t.id = `tile-${index}`;
+                t.onclick = () => handleTileTap(t, item, level.type, q);
+                poolZone.appendChild(t);
+            });
+
+        } else if (level.type === "grammar" || level.type === "odd_one_out") {
+            document.getElementById("display-area").innerHTML = `<div id="question-text">${q.s}</div>`;
+            q.opt.forEach(o => {
+                const b = document.createElement("button");
+                b.className = "btn";
+                b.textContent = o;
+                b.onclick = (e) => verify(o, q.ans, e.target);
+                block.appendChild(b);
+            });
+        } else if (level.type === "flag_match" || level.type === "animal_match") {
+            document.getElementById("display-area").innerHTML = `
+                <span class="visual-display">${q.visual}</span>
+                <div id="question-text" style="font-size:1.1rem; font-weight:500;">${q.s}</div>
+            `;
+            q.opt.forEach(o => {
+                const b = document.createElement("button");
+                b.className = "btn";
+                b.textContent = o;
+                b.onclick = (e) => verify(o, q.ans, e.target);
+                block.appendChild(b);
+            });
+        }
+        updateProgressBar();
+    }
+
+    function handleTileTap(tileBtn, value, levelType, questionObj) {
+        initAudio();
+        const buildZone = document.getElementById("build-zone");
+        
+        if (tileBtn.parentNode.id === "pool-zone") {
+            buildZone.appendChild(tileBtn);
+            builtAnswer.push(value);
+        } else {
+            document.getElementById("pool-zone").appendChild(tileBtn);
+            const index = builtAnswer.indexOf(value);
+            if (index > -1) builtAnswer.splice(index, 1);
+        }
+
+        const targetLen = levelType === "reorder_letters" ? questionObj.word.length : questionObj.sentence.split(" ").length;
+        if (builtAnswer.length === targetLen) {
+            let finalAnswer = levelType === "reorder_letters" ? builtAnswer.join("") : builtAnswer.join(" ");
+            let targetAns = levelType === "reorder_letters" ? questionObj.word : questionObj.sentence;
+            
+            setTimeout(() => {
+                verifyReorder(finalAnswer, targetAns);
+            }, 500);
+        }
+    }
+
+    function verifyReorder(userText, correctText) {
+        const area = document.getElementById("display-area");
+        document.getElementById("reorder-container").style.display = "none";
+
+        if (userText.toLowerCase().trim() === correctText.toLowerCase().trim()) {
+            score++;
+            area.className = "display-box correct-feedback";
+            area.innerHTML = `Correct! 🎉 <br><span style="font-size:1.1rem; font-weight:500;"><strong>${correctText}</strong></span>`;
+            playCorrectSound();
+        } else {
+            area.className = "display-box wrong-feedback";
+            area.innerHTML = `Keep trying! 💪 <br><span style="font-size:0.95rem; font-weight:500;">Answer: <strong>${correctText}</strong></span>`;
+            playWrongSound();
+        }
+
+        progressAfterResponse();
+    }
+
+    function verify(userChoice, correctAns, clickedButton) {
+        initAudio();
+        const area = document.getElementById("display-area");
+        const allButtons = document.querySelectorAll('.interactive-area .btn');
+        
+        allButtons.forEach(b => b.disabled = true);
+
+        if (userChoice === correctAns) {
+            score++;
+            clickedButton.classList.add('clicked-correct');
+            area.className = "display-box correct-feedback";
+            area.innerHTML = "Correct! 🎉";
+            playCorrectSound();
+        } else {
+            clickedButton.classList.add('clicked-wrong');
+            area.className = "display-box wrong-feedback";
+            area.innerHTML = `Keep trying! 💪 <br><span style="font-size:0.95rem; font-weight:500;">Answer: <strong>${correctAns}</strong></span>`;
+            playWrongSound();
+        }
+
+        progressAfterResponse();
+    }
+
+    function progressAfterResponse() {
+        currentIndex++;
+        updateProgressBar();
+
+        setTimeout(() => {
+            if (currentIndex < levelsData[currentLevel].questions.length) {
+                loadQuestion();
+            } else { 
+                document.getElementById("interaction-block").innerHTML = "";
+                document.getElementById("reorder-container").style.display = "none";
+                document.getElementById("score-val").textContent = `Final Level Score: ${score} / ${levelsData[currentLevel].questions.length}`;
+                
+                if (levelsData[currentLevel + 1]) {
+                    document.getElementById("next-level-btn").style.display = "block";
+                    document.getElementById("display-area").innerHTML = `<div style="font-size: 1.4rem;">Level Completed! 🌟</div>`;
+                } else {
+                    document.getElementById("display-area").innerHTML = `<div style="font-size: 1.5rem;">Ultimate Victory! 🏆</div><div style="font-size: 0.95rem; margin-top:8px;">You completed all of Mr. Zaafouri's levels!</div>`;
+                }
+            }
+        }, 2000);
+    }
+
+    function goToNextLevel() {
+        currentLevel++;
+        currentIndex = 0;
+        score = 0;
+        document.getElementById("next-level-btn").style.display = "none";
+        loadQuestion();
+    }
+
+    document.addEventListener('click', initAudio, { once: true });
+    window.onload = loadQuestion;
+</script>
+</body>
+</html>
