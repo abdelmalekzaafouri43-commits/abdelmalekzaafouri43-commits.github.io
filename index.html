@@ -49,7 +49,112 @@
     <!-- FOOTER -->
     <footer>
         <p>&copy; 2026 Success Stories. All rights reserved.</p>
-    </footer>
+  <!-- ======================================================= -->
+<!-- DEBUT DU BLOC : AI FACILITATOR HUB -->
+<!-- ======================================================= -->
+<div class="ai-bridge-container" style="max-width: 600px; margin: 30px auto; padding: 25px; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); font-family: sans-serif; border: 1.5px solid #e2e8f0; text-align: left;">
+    
+    <div style="text-align: center; margin-bottom: 20px;">
+        <span style="background: #0f172a; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">AI Helper</span>
+        <h2 style="color: #0f172a; margin-top: 10px; font-size: 1.5rem;">English on the go — AI Facilitator</h2>
+        <p style="color: #64748b; font-size: 0.9rem; margin-top: 5px;">Select your role and topic to get personalized explanations or ready-to-print worksheets!</p>
+    </div>
+
+    <!-- Étape 1 : Choix du rôle -->
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1e293b; font-size: 0.9rem;">1. Who are you?</label>
+        <div style="display: flex; gap: 10px; justify-content: space-between;">
+            <button onclick="selectRole('pupil', this)" class="ai-role-btn" style="flex: 1; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; font-weight: 500;">🧒 Pupil</button>
+            <button onclick="selectRole('parent', this)" class="ai-role-btn" style="flex: 1; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; font-weight: 500;">👪 Parent</button>
+            <button onclick="selectRole('teacher', this)" class="ai-role-btn" style="flex: 1; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; font-weight: 500;">🍎 Teacher</button>
+        </div>
+    </div>
+
+    <!-- Étape 2 : Choix du temps -->
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #1e293b; font-size: 0.9rem;">2. Choose a Grammar Tense:</label>
+        <div style="display: flex; gap: 10px; justify-content: space-between;">
+            <button onclick="selectTense('present', this)" class="ai-tense-btn" style="flex: 1; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; font-weight: 500;">📅 Present</button>
+            <button onclick="selectTense('past', this)" class="ai-tense-btn" style="flex: 1; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; font-weight: 500;">⏳ Past</button>
+            <button onclick="selectTense('future', this)" class="ai-tense-btn" style="flex: 1; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; background: white; cursor: pointer; transition: 0.2s; font-weight: 500;">🚀 Future</button>
+        </div>
+    </div>
+
+    <!-- Bouton d'action -->
+    <button onclick="askAIFacilitator()" id="aiSubmitBtn" style="width: 100%; background: #d97706; color: white; border: none; padding: 14px; font-size: 1rem; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s;">
+        Ask AI Facilitator ✨
+    </button>
+
+    <!-- Zone de réponse de l'IA -->
+    <div id="aiResponseBox" style="margin-top: 20px; padding: 15px; border-radius: 10px; background: #f8fafc; border-left: 4px solid #d97706; display: none; max-height: 400px; overflow-y: auto;">
+        <h4 style="color: #0f172a; margin-bottom: 8px; font-size: 0.95rem;">AI Explanation / Worksheet:</h4>
+        <div id="aiResponseText" style="font-size: 0.9rem; color: #334155; line-height: 1.5; white-space: pre-line;">
+            <!-- Les réponses de l'IA s'afficheront ici -->
+        </div>
+    </div>
+</div>
+
+<script>
+    let selectedRole = '';
+    let selectedTense = '';
+
+    function selectRole(role, element) {
+        document.querySelectorAll('.ai-role-btn').forEach(btn => {
+            btn.style.background = 'white';
+            btn.style.borderColor = '#cbd5e1';
+            btn.style.color = '#000';
+        });
+        element.style.background = '#0f172a';
+        element.style.color = 'white';
+        element.style.borderColor = '#0f172a';
+        selectedRole = role;
+    }
+
+    function selectTense(tense, element) {
+        document.querySelectorAll('.ai-tense-btn').forEach(btn => {
+            btn.style.background = 'white';
+            btn.style.borderColor = '#cbd5e1';
+            btn.style.color = '#000';
+        });
+        element.style.background = '#d97706';
+        element.style.color = 'white';
+        element.style.borderColor = '#d97706';
+        selectedTense = tense;
+    }
+
+    function askAIFacilitator() {
+        if (!selectedRole || !selectedTense) {
+            alert("Please select both your role and a grammar tense first!");
+            return;
+        }
+
+        const btn = document.getElementById('aiSubmitBtn');
+        const responseBox = document.getElementById('aiResponseBox');
+        const responseText = document.getElementById('aiResponseText');
+
+        btn.innerText = "Consulting AI Tutor... 🧠";
+        btn.disabled = true;
+
+        // Simulation temporaire du retour de l'IA pour tester le visuel localement
+        // Dans l'étape suivante, nous connecterons cette fonction à votre webhook Make.com
+        setTimeout(() => {
+            responseBox.style.display = 'block';
+            if (selectedRole === 'teacher') {
+                responseText.innerText = `[Teacher Worksheet Guide Generated]\n\nTopic: Simple ${selectedTense.toUpperCase()}\n\nHere is a printable outline for your class:\n1. Warm-up Exercise (5 mins)\n2. Practice Sentences (Fill-in-the-blanks)\n3. Creative Writing Prompt.\n\n(This will be fully populated by the live AI agent in the next step!)`;
+            } else if (selectedRole === 'parent') {
+                responseText.innerText = `[Parent Guide Generated]\n\nTopic: Simple ${selectedTense.toUpperCase()}\n\nHow to help your child at home:\nTry playing a quick 2-minute "Time Traveler" game! Ask them to tell you one thing they did yesterday using the simple ${selectedTense} tense.`;
+            } else {
+                responseText.innerText = `[Pupil Explanation Generated]\n\nHey there! Let's look at the Simple ${selectedTense.toUpperCase()} tense.\n\nWe use this when we want to talk about things in a super clear way! Let's practice with some fun, easy examples.`;
+            }
+            btn.innerText = "Ask AI Facilitator ✨";
+            btn.disabled = false;
+        }, 1500);
+    }
+</script>
+<!-- ======================================================= -->
+<!-- FIN DU BLOC : AI FACILITATOR HUB -->
+<!-- ======================================================= -->
+  </footer>
 
  ... (your existing page code above) ...
 
